@@ -9,6 +9,11 @@ const inputSearch = document.querySelector('.search__input'),
   const data = await fetch(`https://api.github.com/search/repositories?q=${e}`)
   .then(e=> e.json())
   .then(arr => {
+    if(arr.length === 0) {
+      autocomplite.style.display = 'none';
+      autocomplite.textContent = '';
+      return
+    };
     autocomplite.textContent = '';
     const renderData = arr.items.slice(0,5);
     autocomplite.style.display = 'block'
