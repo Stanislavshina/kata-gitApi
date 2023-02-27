@@ -5,7 +5,7 @@ const inputSearch = document.querySelector('.search__input'),
 
 
  async function fetchData(e) {
-  if(!e) return;
+  if(e.length === 0) return;
   const data = await fetch(`https://api.github.com/search/repositories?q=${e}`)
   .then(e=> e.json())
   .then(arr => {
@@ -14,9 +14,8 @@ const inputSearch = document.querySelector('.search__input'),
       autocomplite.textContent = '';
       return
     };
-    autocomplite.textContent = '';
     const renderData = arr.items.slice(0,5);
-    autocomplite.style.display = 'block'
+    autocomplite.style.display = 'block';
     renderData.forEach(el => {
       const owner = el.owner.login;
       const stars = el.stargazers_count;
@@ -49,8 +48,10 @@ const repoDel = (arr, elToRemove) => {
 fetchData = debounce(fetchData, 500);
 inputSearch.addEventListener('input', (e) => {
   let val = e.target.value;
-  if(!val) autocomplite.style.display = 'none';
-  fetchData(val)
+  if(val.length === 0 || val[0].match(/\s/)) {
+    return autocomplite.style.display = 'none';
+  };
+  if(val) return fetchData(val);
 });
 
 autocomplite.addEventListener('click', (e)=>{
