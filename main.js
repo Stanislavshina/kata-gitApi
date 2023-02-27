@@ -14,9 +14,11 @@ const inputSearch = document.querySelector('.search__input'),
       autocomplite.textContent = '';
       return
     };
-    const renderData = arr.items.slice(0,5);
+    autocomplite.textContent = '';
+    let renderData = arr.items.slice(0,5);
+    console.log(renderData);
     autocomplite.style.display = 'block';
-    renderData.forEach(el => {
+    renderData.forEach((el, i) => {
       const owner = el.owner.login;
       const stars = el.stargazers_count;
       autocomplite.insertAdjacentHTML('beforeend', `
@@ -24,6 +26,7 @@ const inputSearch = document.querySelector('.search__input'),
         <button class='autocomlite__link' data-login=${owner} data-stars=${stars}>${el.name}</button>
         </li>
       `);
+      if(i === renderData.length-1) return renderData = [];
     });
   })
   .catch(e=> {throw new Error(`не поймал дату: ${e}`)});
@@ -45,7 +48,7 @@ const repoDel = (arr, elToRemove) => {
   x = x.filter(el => el.dataset.name === toRemove ? el.remove() : el)
 };
 
-fetchData = debounce(fetchData, 500);
+fetchData = debounce(fetchData, 1000);
 inputSearch.addEventListener('input', (e) => {
   let val = e.target.value;
   if(val.length === 0 || val[0].match(/\s/)) {
