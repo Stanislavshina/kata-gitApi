@@ -9,7 +9,6 @@ const inputSearch = document.querySelector('.search__input'),
   const data = await fetch(`https://api.github.com/search/repositories?q=${e}`)
   .then(e=> e.json())
   .then(arr => {
-    if(!renderData) console.log(1);
     autocomplite.textContent = '';
     renderData = [...arr.items.slice(0,5)];
     console.log(renderData);
@@ -25,7 +24,6 @@ const inputSearch = document.querySelector('.search__input'),
     });
   })
   .catch(e=> {throw new Error(`не поймал дату: ${e}`)});
-  console.log(data);
 };
 
 
@@ -44,12 +42,14 @@ const repoDel = (arr, elToRemove) => {
   x = x.filter(el => el.dataset.name === toRemove ? el.remove() : el)
 };
 
-fetchData = debounce(fetchData, 1000);
+fetchData = debounce(fetchData, 480);
 inputSearch.addEventListener('keydown', (e) => {
-  let val = e.target.value.trim();
-  if(val.length === 1 && e.code === `Backspace` /*val[0].match(/\s/)*/) {
-    console.log(e.code);
-    return autocomplite.style.display = 'none';
+  let val = e.target.value;
+  val = val.trim()
+  if(e.code === `Backspace` && val.length <= 2 /*val[0].match(/\s/)*/) {
+      console.log(1);
+      autocomplite.style.display = 'none';
+      return;
   };
   if(val) fetchData(val);
 });
