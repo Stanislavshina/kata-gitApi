@@ -5,20 +5,16 @@ const inputSearch = document.querySelector('.search__input'),
 
 
  async function fetchData(e) {
-  if(e.length === 0) return;
+  let renderData = []
   const data = await fetch(`https://api.github.com/search/repositories?q=${e}`)
   .then(e=> e.json())
   .then(arr => {
-    if(arr.length === 0) {
-      autocomplite.style.display = 'none';
-      autocomplite.textContent = '';
-      return
-    };
+    if(!renderData) console.log(1);
     autocomplite.textContent = '';
-    let renderData = arr.items.slice(0,5);
+    renderData = [...arr.items.slice(0,5)];
     console.log(renderData);
     autocomplite.style.display = 'block';
-    renderData.forEach((el, i) => {
+    renderData.forEach(el => {
       const owner = el.owner.login;
       const stars = el.stargazers_count;
       autocomplite.insertAdjacentHTML('beforeend', `
@@ -26,10 +22,10 @@ const inputSearch = document.querySelector('.search__input'),
         <button class='autocomlite__link' data-login=${owner} data-stars=${stars}>${el.name}</button>
         </li>
       `);
-      if(i === renderData.length-1) return renderData = [];
     });
   })
   .catch(e=> {throw new Error(`не поймал дату: ${e}`)});
+  console.log(data);
 };
 
 
@@ -49,12 +45,13 @@ const repoDel = (arr, elToRemove) => {
 };
 
 fetchData = debounce(fetchData, 1000);
-inputSearch.addEventListener('input', (e) => {
-  let val = e.target.value;
-  if(val.length === 0 || val[0].match(/\s/)) {
+inputSearch.addEventListener('keydown', (e) => {
+  let val = e.target.value.trim();
+  if(val.length === 1 && e.code === `Backspace` /*val[0].match(/\s/)*/) {
+    console.log(e.code);
     return autocomplite.style.display = 'none';
   };
-  if(val) return fetchData(val);
+  if(val) fetchData(val);
 });
 
 autocomplite.addEventListener('click', (e)=>{
